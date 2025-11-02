@@ -1,0 +1,155 @@
+═══════════════════════════════════════════════════════════════
+  COPY-PASTE COMMANDS FOR GITHUB + VERCEL DEPLOYMENT
+═══════════════════════════════════════════════════════════════
+
+⚠️  IMPORTANT: Replace YOUR-USERNAME and YOUR-REPO-NAME with your 
+    actual GitHub username and repository name!
+
+───────────────────────────────────────────────────────────────
+STEP 1: INITIAL GIT SETUP (Run in PowerShell)
+───────────────────────────────────────────────────────────────
+
+cd "e:\MVP 2"
+
+git init
+
+git add .
+
+git commit -m "Initial commit: Smart Email Reply Assistant with AI features"
+
+git remote add origin https://github.com/YOUR-USERNAME/YOUR-REPO-NAME.git
+
+git branch -M main
+
+git push -u origin main
+
+
+───────────────────────────────────────────────────────────────
+EXAMPLE (Replace with your actual values):
+───────────────────────────────────────────────────────────────
+
+If your GitHub username is: johnsmith
+And your repository name is: smart-email-reply-assistant
+
+Then use:
+git remote add origin https://github.com/johnsmith/smart-email-reply-assistant.git
+
+
+───────────────────────────────────────────────────────────────
+STEP 2: VERCEL ENVIRONMENT VARIABLES
+───────────────────────────────────────────────────────────────
+
+Copy these KEYS exactly as shown (one by one in Vercel):
+
+NEXT_PUBLIC_SUPABASE_URL
+
+NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+OPENROUTER_API_KEY
+
+
+For VALUES:
+→ Get NEXT_PUBLIC_SUPABASE_URL from: supabase.com → Your Project → Settings → API → Project URL
+→ Get NEXT_PUBLIC_SUPABASE_ANON_KEY from: supabase.com → Your Project → Settings → API → anon public key
+→ Get OPENROUTER_API_KEY from: openrouter.ai → Keys
+
+
+───────────────────────────────────────────────────────────────
+STEP 3: FUTURE UPDATES (Run these whenever you make changes)
+───────────────────────────────────────────────────────────────
+
+git add .
+
+git commit -m "Your update description here"
+
+git push
+
+
+───────────────────────────────────────────────────────────────
+USEFUL GIT COMMANDS
+───────────────────────────────────────────────────────────────
+
+# Check what files changed
+git status
+
+# See your commit history
+git log --oneline
+
+# Undo last commit (keep changes)
+git reset --soft HEAD~1
+
+# See what changed in files
+git diff
+
+
+───────────────────────────────────────────────────────────────
+TROUBLESHOOTING COMMANDS
+───────────────────────────────────────────────────────────────
+
+# If you get "git not recognized" error, install Git:
+# Download from: https://git-scm.com/
+
+# If remote already exists error:
+git remote remove origin
+git remote add origin https://github.com/YOUR-USERNAME/YOUR-REPO-NAME.git
+
+# If you need to force push (careful!):
+git push -f origin main
+
+# Check your remote URL:
+git remote -v
+
+
+───────────────────────────────────────────────────────────────
+GITHUB AUTHENTICATION
+───────────────────────────────────────────────────────────────
+
+If Git asks for username and password:
+
+Username: [Your GitHub username]
+Password: [Use Personal Access Token, NOT your GitHub password]
+
+To create Personal Access Token:
+1. GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)
+2. Generate new token (classic)
+3. Name: "Deploy Smart Email Reply"
+4. Select: "repo" (full control)
+5. Generate token
+6. COPY IT (you won't see it again!)
+7. Use this token as your password
+
+
+───────────────────────────────────────────────────────────────
+QUICK CHECKLIST
+───────────────────────────────────────────────────────────────
+
+Before running commands:
+□ GitHub account created
+□ New repository created on GitHub
+□ Git installed on your computer
+□ PowerShell/Terminal open in project folder
+
+After running commands:
+□ Code visible on GitHub
+□ Vercel account created
+□ Project imported to Vercel
+□ All 3 environment variables added
+□ Deployment successful
+□ Live URL working
+
+
+───────────────────────────────────────────────────────────────
+YOUR LIVE URL
+───────────────────────────────────────────────────────────────
+
+After deployment, your app will be at:
+https://your-project-name.vercel.app
+
+(Vercel will show you the exact URL)
+
+
+═══════════════════════════════════════════════════════════════
+  🎉 THAT'S IT! YOUR APP WILL BE LIVE!
+═══════════════════════════════════════════════════════════════
+
+For detailed explanations, see: GITHUB_AND_VERCEL_DEPLOYMENT.md

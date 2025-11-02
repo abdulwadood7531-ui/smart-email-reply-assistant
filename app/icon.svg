@@ -1,0 +1,20 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <rect width="64" height="64" rx="16" fill="url(#gradient)"/>
+  
+  <!-- Envelope -->
+  <path d="M16 24L31.56 32.52C31.8375 32.6858 32.1631 32.7742 32.496 32.7742C32.8289 32.7742 33.1545 32.6858 33.432 32.52L49 24M20 45H44C44.7956 45 45.5587 44.6839 46.1213 44.1213C46.6839 43.5587 47 42.7956 47 42V26C47 25.2044 46.6839 24.4413 46.1213 23.8787C45.5587 23.3161 44.7956 23 44 23H20C19.2044 23 18.4413 23.3161 17.8787 23.8787C17.3161 24.4413 17 25.2044 17 26V42C17 42.7956 17.3161 43.5587 17.8787 44.1213C18.4413 44.6839 19.2044 45 20 45Z" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- AI Sparkle -->
+  <circle cx="48" cy="20" r="8" fill="#FCD34D"/>
+  <path d="M48 15V25M43 20H53" stroke="white" stroke-width="3" stroke-linecap="round"/>
+  
+  <!-- Gradient definition -->
+  <defs>
+    <linearGradient id="gradient" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="50%" stop-color="#22c55e"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+  </defs>
+</svg>
