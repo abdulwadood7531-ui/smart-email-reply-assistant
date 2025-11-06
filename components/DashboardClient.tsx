@@ -135,7 +135,7 @@ export default function DashboardClient({ replies: initialReplies, userEmail }: 
               Get started with your AI email assistant
             </CardDescription>
           </CardHeader>
-          <CardContent className="flex flex-col sm:flex-row gap-4">
+          <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <Link href="/new-reply" className="flex-1">
               <Button 
                 variant="outline" 
@@ -148,6 +148,22 @@ export default function DashboardClient({ replies: initialReplies, userEmail }: 
                   <div className="text-left">
                     <div className="font-bold text-base">Generate New Reply</div>
                     <div className="text-xs text-emerald-600">Create AI-powered email response</div>
+                  </div>
+                </div>
+              </Button>
+            </Link>
+            <Link href="/summarize" className="flex-1">
+              <Button 
+                variant="outline" 
+                className="w-full bg-white text-cyan-700 hover:bg-cyan-50 border-0 h-auto py-5 shadow-lg hover:shadow-xl hover:scale-105 transition-all"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-cyan-100 rounded-lg">
+                    <FileText className="h-5 w-5 text-cyan-600" />
+                  </div>
+                  <div className="text-left">
+                    <div className="font-bold text-base">Summarize Email</div>
+                    <div className="text-xs text-cyan-600">Get concise email summaries</div>
                   </div>
                 </div>
               </Button>

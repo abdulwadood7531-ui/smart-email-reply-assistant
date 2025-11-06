@@ -3,12 +3,13 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, PlusCircle, History, Menu, X } from 'lucide-react'
+import { Home, PlusCircle, History, Menu, X, FileText } from 'lucide-react'
 import Logo from './Logo'
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: Home },
   { name: 'New Reply', href: '/new-reply', icon: PlusCircle },
+  { name: 'Summarize', href: '/summarize', icon: FileText },
   { name: 'History', href: '/dashboard', icon: History },
 ]
 
