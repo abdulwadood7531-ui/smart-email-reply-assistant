@@ -18,6 +18,15 @@ export async function DELETE() {
 
     const userId = user.id
 
+    // Check if service role key is configured
+    if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      console.error('SUPABASE_SERVICE_ROLE_KEY is not configured')
+      return NextResponse.json(
+        { error: 'Account deletion is not configured. Please contact support.' },
+        { status: 500 }
+      )
+    }
+
     // Delete user's data from replies table (will cascade automatically due to ON DELETE CASCADE)
     const { error: deleteDataError } = await supabase
       .from('replies')
@@ -32,7 +41,7 @@ export async function DELETE() {
     // Create admin client with service role key to delete the user
     const supabaseAdmin = createAdminClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY,
       {
         auth: {
           autoRefreshToken: false,
