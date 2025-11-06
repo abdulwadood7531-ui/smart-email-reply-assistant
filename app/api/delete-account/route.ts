@@ -27,6 +27,8 @@ export async function DELETE() {
       )
     }
 
+    console.log('Service role key is configured, proceeding with deletion for user:', userId)
+
     // Delete user's data from replies table (will cascade automatically due to ON DELETE CASCADE)
     const { error: deleteDataError } = await supabase
       .from('replies')
@@ -51,15 +53,18 @@ export async function DELETE() {
     )
 
     // Delete the user account from Supabase Auth using admin client
+    console.log('Attempting to delete user with admin client...')
     const { error: deleteUserError } = await supabaseAdmin.auth.admin.deleteUser(userId)
 
     if (deleteUserError) {
-      console.error('Failed to delete user:', deleteUserError)
+      console.error('Failed to delete user:', JSON.stringify(deleteUserError))
       return NextResponse.json(
-        { error: 'Failed to delete account. Please contact support.' },
+        { error: `Failed to delete account: ${deleteUserError.message || 'Unknown error'}` },
         { status: 500 }
       )
     }
+
+    console.log('User deleted successfully:', userId)
 
     return NextResponse.json(
       { message: 'Account deleted successfully' },
