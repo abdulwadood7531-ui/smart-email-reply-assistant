@@ -6,6 +6,7 @@ A modern, AI-powered web application that helps you generate professional email 
 
 - **AI-Powered Replies** - Generate professional email responses instantly
 - **Email Summaries** - Get concise summaries of long emails
+- **Account Management** - Full account control with secure deletion
 - **Beautiful UI** - Modern green & blue design with smooth animations
 - **Secure Authentication** - Powered by Supabase Auth
 - **Fully Responsive** - Works perfectly on all devices
@@ -111,10 +112,16 @@ Edit `.env.local` and add your credentials:
 # Supabase Configuration
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
 
 # OpenRouter API Configuration
 OPENROUTER_API_KEY=sk-or-your-openrouter-api-key
 ```
+
+**Important**: To enable account deletion, you need to add the `SUPABASE_SERVICE_ROLE_KEY`:
+1. Go to your Supabase project → **Settings** → **API**
+2. Copy the **service_role** key (keep this secret!)
+3. Add it to your `.env.local` file
 
 ### 6. Run the Development Server
 
@@ -203,6 +210,7 @@ Make sure to add these in your deployment platform:
 
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY` (required for account deletion)
 - `OPENROUTER_API_KEY`
 
 ## 🎨 Customization

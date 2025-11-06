@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Mail, Lock, Loader2, CheckCircle } from 'lucide-react'
+import { Mail, Lock, Loader2 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -16,18 +16,8 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const [showDeletedMessage, setShowDeletedMessage] = useState(false)
   const router = useRouter()
-  const searchParams = useSearchParams()
   const supabase = createClient()
-
-  useEffect(() => {
-    if (searchParams.get('deleted') === 'true') {
-      setShowDeletedMessage(true)
-      // Hide the message after 5 seconds
-      setTimeout(() => setShowDeletedMessage(false), 5000)
-    }
-  }, [searchParams])
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -83,13 +73,6 @@ export default function SignupPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSignup} className="space-y-5">
-              {showDeletedMessage && (
-                <div className="bg-green-50 border border-green-300 text-green-700 px-4 py-3 rounded-xl text-sm flex items-center gap-2 animate-slide-up">
-                  <CheckCircle className="w-5 h-5 flex-shrink-0" />
-                  Account deleted successfully! You can create a new account with the same email.
-                </div>
-              )}
-              
               {error && (
                 <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded-xl text-sm flex items-center gap-2 animate-slide-up">
                   <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">

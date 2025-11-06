@@ -11,8 +11,10 @@ import Sidebar from '@/components/Sidebar'
 
 export default function AccountPage() {
   const [userEmail, setUserEmail] = useState<string>('')
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [deleting, setDeleting] = useState(false)
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
+  const [confirmEmail, setConfirmEmail] = useState('')
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
   const supabase = createClient()
@@ -20,21 +22,26 @@ export default function AccountPage() {
   useEffect(() => {
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
-      if (user?.email) {
-        setUserEmail(user.email)
-      } else {
+      if (!user) {
         router.push('/login')
+      } else {
+        setUserEmail(user.email || '')
       }
+      setLoading(false)
     }
     getUser()
-  }, [supabase, router])
+  }, [router, supabase.auth])
 
   const handleDeleteAccount = async () => {
-    setLoading(true)
+    if (confirmEmail !== userEmail) {
+      setError('Email does not match. Please type your email correctly.')
+      return
+    }
+
+    setDeleting(true)
     setError(null)
 
     try {
-      // Call the delete account API
       const response = await fetch('/api/delete-account', {
         method: 'DELETE',
         headers: {
@@ -48,17 +55,22 @@ export default function AccountPage() {
         throw new Error(data.error || 'Failed to delete account')
       }
 
-      // Sign out the user
+      // Sign out and redirect to signup page
       await supabase.auth.signOut()
-      
-      // Redirect to signup page with success message
-      router.push('/signup?deleted=true')
+      router.push('/signup')
+      router.refresh()
     } catch (err: any) {
       setError(err.message || 'An error occurred while deleting your account')
-      setShowConfirmDialog(false)
-    } finally {
-      setLoading(false)
+      setDeleting(false)
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-50 via-emerald-50 to-green-50">
+        <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+      </div>
+    )
   }
 
   return (
@@ -66,112 +78,117 @@ export default function AccountPage() {
       <Sidebar />
       <Navbar userEmail={userEmail} />
       
-      <main className="lg:ml-64 pt-20 px-4 sm:px-6 lg:px-8 pb-12">
+      <main className="lg:ml-64 p-4 sm:p-6 lg:p-8">
         <div className="max-w-3xl mx-auto">
-          <div className="mb-8 animate-slide-up">
+          <div className="mb-8">
             <h1 className="text-4xl font-black bg-gradient-to-r from-cyan-600 via-emerald-600 to-green-600 bg-clip-text text-transparent mb-2">
               Account Settings
             </h1>
-            <p className="text-emerald-700 font-medium">
-              Manage your account preferences and data
-            </p>
+            <p className="text-emerald-700 font-medium">Manage your account preferences</p>
           </div>
 
           {/* Account Information Card */}
-          <Card className="mb-6 bg-white/80 backdrop-blur-lg border-2 border-emerald-200/50 shadow-lg animate-slide-up">
+          <Card className="mb-6 bg-white/80 backdrop-blur-sm border-2 border-emerald-200/50 shadow-lg">
             <CardHeader className="bg-gradient-to-br from-cyan-50 via-emerald-50 to-green-50">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 via-green-500 to-cyan-500 rounded-full flex items-center justify-center shadow-md">
-                  <User className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <CardTitle className="text-2xl font-bold text-emerald-900">Account Information</CardTitle>
-                  <CardDescription className="text-emerald-600 font-medium">Your registered email address</CardDescription>
-                </div>
-              </div>
+              <CardTitle className="text-2xl font-bold text-emerald-900 flex items-center gap-2">
+                <User className="h-6 w-6" />
+                Account Information
+              </CardTitle>
+              <CardDescription className="text-emerald-700">Your account details</CardDescription>
             </CardHeader>
             <CardContent className="pt-6">
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-emerald-800">Email Address</label>
-                <div className="px-4 py-3 bg-gradient-to-r from-emerald-50 to-cyan-50 rounded-xl border-2 border-emerald-200">
-                  <p className="text-emerald-900 font-medium">{userEmail}</p>
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-semibold text-emerald-800">Email Address</label>
+                  <div className="mt-2 p-3 bg-emerald-50 border-2 border-emerald-200 rounded-lg">
+                    <p className="text-emerald-900 font-medium">{userEmail}</p>
+                  </div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Danger Zone Card */}
-          <Card className="bg-white/80 backdrop-blur-lg border-2 border-red-200/50 shadow-lg animate-slide-up" style={{ animationDelay: '0.1s' }}>
+          <Card className="bg-white/80 backdrop-blur-sm border-2 border-red-200 shadow-lg">
             <CardHeader className="bg-gradient-to-br from-red-50 to-orange-50">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center shadow-md">
-                  <AlertTriangle className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <CardTitle className="text-2xl font-bold text-red-900">Danger Zone</CardTitle>
-                  <CardDescription className="text-red-600 font-medium">Irreversible actions</CardDescription>
-                </div>
-              </div>
+              <CardTitle className="text-2xl font-bold text-red-900 flex items-center gap-2">
+                <AlertTriangle className="h-6 w-6" />
+                Danger Zone
+              </CardTitle>
+              <CardDescription className="text-red-700">Irreversible actions</CardDescription>
             </CardHeader>
             <CardContent className="pt-6">
-              {error && (
-                <div className="mb-4 bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded-xl text-sm flex items-center gap-2">
-                  <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                  </svg>
-                  {error}
-                </div>
-              )}
-
               <div className="space-y-4">
-                <div className="p-4 bg-red-50 border-2 border-red-200 rounded-xl">
+                <div className="p-4 bg-red-50 border-2 border-red-200 rounded-lg">
                   <h3 className="text-lg font-bold text-red-900 mb-2">Delete Account</h3>
                   <p className="text-sm text-red-700 mb-4">
-                    Once you delete your account, all your data including email replies and history will be permanently removed. 
-                    You will be able to create a new account with the same email address after deletion.
+                    Once you delete your account, there is no going back. This will permanently delete your account and all associated data including email replies and summaries.
                   </p>
                   
                   {!showConfirmDialog ? (
                     <Button
                       onClick={() => setShowConfirmDialog(true)}
                       variant="destructive"
-                      className="w-full sm:w-auto bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600"
+                      className="bg-red-600 hover:bg-red-700"
                     >
                       <Trash2 className="h-4 w-4 mr-2" />
-                      Delete My Account
+                      Delete Account
                     </Button>
                   ) : (
-                    <div className="space-y-3 p-4 bg-white rounded-lg border-2 border-red-300">
-                      <p className="text-sm font-bold text-red-900">
-                        Are you absolutely sure? This action cannot be undone.
-                      </p>
-                      <div className="flex gap-3">
-                        <Button
-                          onClick={handleDeleteAccount}
-                          disabled={loading}
-                          variant="destructive"
-                          className="flex-1 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600"
-                        >
-                          {loading ? (
-                            <>
-                              <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                              Deleting...
-                            </>
-                          ) : (
-                            <>
-                              <Trash2 className="h-4 w-4 mr-2" />
-                              Yes, Delete Forever
-                            </>
-                          )}
-                        </Button>
-                        <Button
-                          onClick={() => setShowConfirmDialog(false)}
-                          disabled={loading}
-                          variant="outline"
-                          className="flex-1 border-2 border-emerald-300 hover:bg-emerald-50"
-                        >
-                          Cancel
-                        </Button>
+                    <div className="space-y-4 animate-slide-up">
+                      <div className="p-4 bg-white border-2 border-red-300 rounded-lg">
+                        <p className="text-sm font-bold text-red-900 mb-3">
+                          Are you absolutely sure? This action cannot be undone.
+                        </p>
+                        <p className="text-sm text-red-700 mb-3">
+                          Please type <span className="font-bold">{userEmail}</span> to confirm.
+                        </p>
+                        <input
+                          type="email"
+                          value={confirmEmail}
+                          onChange={(e) => setConfirmEmail(e.target.value)}
+                          placeholder="Enter your email"
+                          className="w-full px-3 py-2 border-2 border-red-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 mb-3"
+                        />
+                        
+                        {error && (
+                          <div className="mb-3 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
+                            {error}
+                          </div>
+                        )}
+                        
+                        <div className="flex gap-3">
+                          <Button
+                            onClick={handleDeleteAccount}
+                            disabled={deleting || confirmEmail !== userEmail}
+                            variant="destructive"
+                            className="bg-red-600 hover:bg-red-700"
+                          >
+                            {deleting ? (
+                              <>
+                                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                                Deleting...
+                              </>
+                            ) : (
+                              <>
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Yes, Delete My Account
+                              </>
+                            )}
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              setShowConfirmDialog(false)
+                              setConfirmEmail('')
+                              setError(null)
+                            }}
+                            disabled={deleting}
+                            variant="outline"
+                            className="border-2 border-emerald-300"
+                          >
+                            Cancel
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   )}

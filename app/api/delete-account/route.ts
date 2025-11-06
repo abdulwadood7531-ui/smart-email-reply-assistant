@@ -1,13 +1,14 @@
-import { createClient, createAdminClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
+import { createClient as createAdminClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 
 export async function DELETE() {
   try {
     const supabase = await createClient()
-    
+
     // Get the current user
     const { data: { user }, error: userError } = await supabase.auth.getUser()
-    
+
     if (userError || !user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -15,25 +16,38 @@ export async function DELETE() {
       )
     }
 
-    // Delete user's replies from the database
-    const { error: repliesError } = await supabase
+    const userId = user.id
+
+    // Delete user's data from replies table (will cascade automatically due to ON DELETE CASCADE)
+    const { error: deleteDataError } = await supabase
       .from('replies')
       .delete()
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
 
-    if (repliesError) {
-      console.error('Error deleting replies:', repliesError)
-      // Continue with account deletion even if replies deletion fails
+    if (deleteDataError) {
+      console.error('Error deleting user data:', deleteDataError)
+      // Continue with account deletion even if data deletion fails
     }
 
-    // Delete the user account using Supabase Admin API
-    // This requires the service role key
-    const adminClient = createAdminClient()
-    const { error: deleteError } = await adminClient.auth.admin.deleteUser(user.id)
+    // Create admin client with service role key to delete the user
+    const supabaseAdmin = createAdminClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
 
-    if (deleteError) {
+    // Delete the user account from Supabase Auth using admin client
+    const { error: deleteUserError } = await supabaseAdmin.auth.admin.deleteUser(userId)
+
+    if (deleteUserError) {
+      console.error('Failed to delete user:', deleteUserError)
       return NextResponse.json(
-        { error: 'Failed to delete account: ' + deleteError.message },
+        { error: 'Failed to delete account. Please contact support.' },
         { status: 500 }
       )
     }
@@ -43,9 +57,9 @@ export async function DELETE() {
       { status: 200 }
     )
   } catch (error: any) {
-    console.error('Error in delete-account:', error)
+    console.error('Error in delete-account route:', error)
     return NextResponse.json(
-      { error: 'Internal server error: ' + error.message },
+      { error: error.message || 'An error occurred while deleting the account' },
       { status: 500 }
     )
   }

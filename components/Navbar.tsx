@@ -3,7 +3,6 @@
 import { LogOut, User } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 
 interface NavbarProps {
   userEmail: string
@@ -27,7 +26,7 @@ export default function Navbar({ userEmail }: NavbarProps) {
           
           <div className="flex items-center gap-4">
             {/* User info */}
-            <Link href="/account" className="hidden sm:flex items-center gap-3 px-4 py-2 bg-gradient-to-r from-emerald-50 to-cyan-50 rounded-xl border-2 border-emerald-200 shadow-sm hover:shadow-md hover:border-emerald-300 transition-all">
+            <div className="hidden sm:flex items-center gap-3 px-4 py-2 bg-gradient-to-r from-emerald-50 to-cyan-50 rounded-xl border-2 border-emerald-200 shadow-sm">
               <div className="w-9 h-9 bg-gradient-to-br from-emerald-500 via-green-500 to-cyan-500 rounded-full flex items-center justify-center shadow-md">
                 <User className="h-5 w-5 text-white" />
               </div>
@@ -35,7 +34,7 @@ export default function Navbar({ userEmail }: NavbarProps) {
                 <p className="text-sm font-bold text-emerald-900">Account</p>
                 <p className="text-xs text-emerald-600 font-medium">{userEmail}</p>
               </div>
-            </Link>
+            </div>
 
             {/* Logout button */}
             <button
